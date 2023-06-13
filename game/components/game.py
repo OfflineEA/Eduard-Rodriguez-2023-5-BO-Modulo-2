@@ -16,6 +16,8 @@ class Game:
         self.game_speed = 10
         self.x_pos_bg = 0
         self.y_pos_bg = 0
+        self.width = SCREEN_WIDTH   # Esta variable almacena el valor del ancho del display
+        self.height = SCREEN_HEIGHT # Esta variable almacena el valor del alto del display
 
         # Game tiene un "Spaceship"
         self.spaceship = SpaceShip()
@@ -44,8 +46,36 @@ class Game:
                 self.playing = False
 
     def update(self):
-        # pass
+        # Creamos una variable para almacenar el boton presionado
+        keys = pygame.key.get_pressed()
+        # La condicional valida cual tecla se presiona, en este caso la flecha izquierda.
+        if keys[pygame.K_LEFT]:
+            # Si se presiona, sumamos a la posicion de la imagen el valor de 5
+            self.spaceship.image_rect.x -= 5
+            # Si la posicion de la imagen es menor a 0, osea esta en el borde izquierdo
+            # declaramos el valor del ancho en la posicion para cambiarlo
+            if self.spaceship.image_rect.x < -80:
+                self.spaceship.image_rect.x = self.width
+        # Todo lo anterior pero con la flecha derecha
+        if keys[pygame.K_RIGHT]:
+            self.spaceship.image_rect.x += 5
+            if self.spaceship.image_rect.x > self.width:
+                self.spaceship.image_rect.x = 0
+
+        # Creamos de la misma manera para la tecla superior e inferior
+        if keys[pygame.K_UP]:
+            self.spaceship.image_rect.y -= 5
+            if self.spaceship.image_rect.y < -120:
+                self.spaceship.image_rect.y = self.height
+
+        if keys[pygame.K_DOWN]:
+            self.spaceship.image_rect.y += 5
+            if self.spaceship.image_rect.y > self.height:
+                self.spaceship.image_rect.y = 0
+
         self.spaceship.update()
+        
+
 
     def draw(self):
         self.clock.tick(FPS)

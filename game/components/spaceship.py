@@ -14,7 +14,7 @@ from game.utils.constants import SPACESHIP
 class SpaceShip(Sprite):
     
     def __init__(self):
-        self.image_size = (40, 60)
+        self.image_size = (80, 120)     # Cambie el tamaño de la imagen
         self.image = pygame.transform.scale(SPACESHIP, self.image_size)
         self.image_rect = self.image.get_rect()
         self.image_rect.x = self.image_size[0]

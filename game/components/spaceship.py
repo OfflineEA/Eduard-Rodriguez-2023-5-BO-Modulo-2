@@ -17,14 +17,18 @@ class SpaceShip(Sprite):
         self.image_size = (60, 90)     # Cambie el tamaño de la imagen
         self.image = pygame.transform.scale(SPACESHIP, self.image_size)
         self.image_rect = self.image.get_rect()
-        self.image_rect.x = self.image_size[0]
-        self.image_rect.y = self.image_size[1]
-        self.movement = 5      # Variable para la cantidad de desplazamiento
+        # Modifico el lugar de creacion de la imagen
+        self.image_rect.x = (SCREEN_WIDTH - self.image_size[0])// 2 
+        self.image_rect.y = SCREEN_HEIGHT * 0.8
+        self.movement = 10      # Variable para la cantidad de desplazamiento
 
     def update(self):
         # Llamamos los metodos para ejecutarlos y actualizarlos
         self.move_in_x()
         self.move_in_y()
+
+        # Segunda opcion para usar codigo
+        # self.move_controlled()
 
     def move_in_x (self):
         # Creamos una variable para almacenar el boton presionado
@@ -58,3 +62,22 @@ class SpaceShip(Sprite):
             self.image_rect.y += self.movement
             if self.image_rect.y > SCREEN_HEIGHT:
                 self.image_rect.y = 0
+
+    # Esta clase permite el movimiento con las flechas pero sin dejar pasar de los bordes
+    def move_controlled (self):
+        self.keys = pygame.key.get_pressed()
+        if self.keys[pygame.K_LEFT]:
+            if self.image_rect.x > 0:
+                self.image_rect.x -= self.movement
+
+        if self.keys[pygame.K_RIGHT]:
+            if self.image_rect.x < SCREEN_WIDTH - self.image_size[0]:
+                self.image_rect.x += self.movement
+        
+        if self.keys[pygame.K_UP]:
+            if self.image_rect.y > 0:
+                self.image_rect.y -= self.movement
+        
+        if self.keys[pygame.K_DOWN]:
+            if self.image_rect.y < SCREEN_HEIGHT - self.image_size[1]:
+                self.image_rect.y += self.movement

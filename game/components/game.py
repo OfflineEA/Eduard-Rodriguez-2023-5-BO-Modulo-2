@@ -4,7 +4,7 @@ from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, F
 
 from game.components.spaceship import SpaceShip
 
-from game.components.spaceshipenemy import SpaceShipEnemy
+from game.components.enemy import Enemy
 
 # Game tiene un "Spaceship" - Por lo general esto es iniciliazar un objeto Spaceship en el __init__
 class Game:
@@ -21,7 +21,7 @@ class Game:
 
         # Game tiene un "Spaceship"
         self.spaceship = SpaceShip()
-        self.spaceship_enemy = SpaceShipEnemy(520,90)
+        self.enemy = Enemy(520,90)
 
     def run(self):
         # Game loop: events - update - draw
@@ -43,12 +43,13 @@ class Game:
             # si el "event" type es igual a pygame.QUIT entonces cambiamos playing a False
             if event.type == pygame.QUIT:
                 self.playing = False
-            
+            self.spaceship.shoot(self.screen)
 
     def update(self):
         # Llamamos el metodo de la clase spaceship para ejecutar el movimiento
         self.spaceship.update()
-        self.spaceship_enemy.update_enemy()
+        self.enemy.update_enemy()
+        
 
     def draw(self):
         self.clock.tick(FPS)
@@ -56,8 +57,10 @@ class Game:
         self.draw_background()
 
         # dibujamos las naves en pantalla
-        self.screen.blit(self.spaceship.image, self.spaceship.image_rect)
-        self.screen.blit(self.spaceship_enemy.rotated_ship_enemy, self.spaceship_enemy.image_rect_enemy)
+        
+        self.spaceship.draw(self.screen)
+        self.spaceship.shoot(self.screen)
+        self.screen.blit(self.enemy.ship_enemy, self.enemy.image_rect_enemy)
 
         pygame.display.update()
         pygame.display.flip()
@@ -71,3 +74,5 @@ class Game:
             self.screen.blit(image, (self.x_pos_bg, self.y_pos_bg - image_height))
             self.y_pos_bg = 0
         self.y_pos_bg += self.game_speed
+
+

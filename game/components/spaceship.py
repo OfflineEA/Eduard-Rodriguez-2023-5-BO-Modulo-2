@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from game.components.bullet import Bullet
 
 from game.utils.constants import SPACESHIP, SCREEN_HEIGHT, SCREEN_WIDTH
 
@@ -21,14 +22,14 @@ class SpaceShip(Sprite):
         self.image_rect.x = (SCREEN_WIDTH - self.image_size[0])// 2 
         self.image_rect.y = SCREEN_HEIGHT * 0.8
         self.movement = 10      # Variable para la cantidad de desplazamiento
+        self.bullets = []
+        self.contador = 0
+        self.bullet = Bullet(self.image_rect.center)
+
+        
 
     def update(self):
-        # Llamamos los metodos para ejecutarlos y actualizarlos
-        self.move_in_x()
-        self.move_in_y()
-
-        # Segunda opcion para usar codigo
-        # self.move_controlled()
+        self.move_controlled()
 
     def move_in_x (self):
         # Creamos una variable para almacenar el boton presionado
@@ -69,15 +70,47 @@ class SpaceShip(Sprite):
         if self.keys[pygame.K_LEFT]:
             if self.image_rect.x > 0:
                 self.image_rect.x -= self.movement
+                self.bullet.bullet_rect.x -= self.movement
 
         if self.keys[pygame.K_RIGHT]:
             if self.image_rect.x < SCREEN_WIDTH - self.image_size[0]:
                 self.image_rect.x += self.movement
+                self.bullet.bullet_rect.x += self.movement
         
         if self.keys[pygame.K_UP]:
             if self.image_rect.y > 0:
                 self.image_rect.y -= self.movement
+                self.bullet.bullet_rect.y -= self.movement
         
         if self.keys[pygame.K_DOWN]:
             if self.image_rect.y < SCREEN_HEIGHT - self.image_size[1]:
                 self.image_rect.y += self.movement
+                self.bullet.bullet_rect.y += self.movement
+
+
+
+    def draw (self, screen):
+        screen.blit(self.image, self.image_rect)
+
+    def shoot (self, screen):
+        self.keys_bullet = pygame.key.get_pressed()
+        if self.keys_bullet[pygame.K_SPACE]:
+            self.contador = 1
+            
+        while True:
+                self.bullet.draw(screen)
+                if self.contador == 1:
+                    self.bullets.append(self.contador)
+                    for self.items in self.bullets:
+                        self.bullet.bullet_rect.y -= self.movement
+                        if self.bullet.bullet_rect.y <= 0:
+                            self.bullets.clear()
+                            self.bullet.update()
+                            self.contador = 0
+                            self.bullet.bullet_rect.y = self.image_rect.y
+                            break
+                break
+
+        
+
+     

@@ -18,10 +18,12 @@ class Game:
         self.game_speed = 10
         self.x_pos_bg = 0
         self.y_pos_bg = 0
-
+        self.group_sprites = pygame.sprite.Group()
         # Game tiene un "Spaceship"
         self.spaceship = SpaceShip()
-        self.enemy = Enemy(520,90)
+        self.enemy = Enemy()
+        
+        self.group_sprites.add(self.spaceship, self.enemy)
 
     def run(self):
         # Game loop: events - update - draw
@@ -43,13 +45,23 @@ class Game:
             # si el "event" type es igual a pygame.QUIT entonces cambiamos playing a False
             if event.type == pygame.QUIT:
                 self.playing = False
-            self.spaceship.shoot(self.screen)
+            
+            
+            
+            #self.spaceship.shoot(self.screen)
 
     def update(self):
         # Llamamos el metodo de la clase spaceship para ejecutar el movimiento
         self.spaceship.update()
         self.enemy.update_enemy()
+
+        # if self.spaceship.indicator_hit:
+        #     print("entra al update")
+        #     self.spaceship.damage_caused()
         
+        
+        
+
 
     def draw(self):
         self.clock.tick(FPS)
@@ -57,10 +69,12 @@ class Game:
         self.draw_background()
 
         # dibujamos las naves en pantalla
-        
-        self.spaceship.draw(self.screen)
         self.spaceship.shoot(self.screen)
-        self.screen.blit(self.enemy.ship_enemy, self.enemy.image_rect_enemy)
+        self.spaceship.draw(self.screen)
+        self.enemy.shoot_enemy(self.screen)
+        self.enemy.draw_enemy(self.screen)
+        
+        
 
         pygame.display.update()
         pygame.display.flip()

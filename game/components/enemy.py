@@ -65,17 +65,17 @@ class Enemy (Sprite):
         self.sound_damage.play()
         font = pygame.font.Font(FONT_STYLE, 28)
         text = font.render(" The enemy has hit you! ", True, (255, 255, 255))
-        screen.blit(text, (SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.40))
+        screen.blit(text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.40))
         pygame.display.update()
         pygame.time.delay(2000)
 
     def status_enemy (self, screen):
         font = pygame.font.Font(FONT_STYLE, 22)
         self.counter_enemy = len(self.hits_enemy)
-        text = f" Times the enemy has hit you: {self.counter_enemy} "
+        text = f" Damage received: {self.counter_enemy} "
         message = font.render(text, True, (0, 0, 0))
         message.get_rect()
-        screen.blit(message, (SCREEN_WIDTH * 0.67, SCREEN_HEIGHT * 0.96))
+        screen.blit(message, (SCREEN_WIDTH * 0.68, SCREEN_HEIGHT * 0.96))
         pygame.display.update()
 
     def restart_enemy (self, position_x, position_y):

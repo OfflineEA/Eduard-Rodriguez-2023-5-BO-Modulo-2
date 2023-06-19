@@ -2,7 +2,6 @@ import pygame
 import random
 from pygame.sprite import Sprite
 from game.components.bullet import Bullet
-from game.components.enemy import Enemy
 
 from game.utils.constants import SPACESHIP, SCREEN_HEIGHT, SCREEN_WIDTH, BULLET, SPACESHIP_DAMAGE, BULLET_DOUBLE, FONT_STYLE
 
@@ -21,12 +20,11 @@ class SpaceShip(Sprite):
         self.bullets = []
         self.hits = []
         self.bullet = Bullet(self.image_rect.center, BULLET)
-        self.enemy = Enemy(520, 90)
         self.counter = 0
         self.bullet_counter = 0
         self.random_counter = random.randrange(3, 5)
         self.current_spaceship = 0
-        self.weapon_duration = 1  # Duración del escudo
+        self.weapon_duration = 1  
         self.weapon_counter = 0
         self.failed_attack = False
 
@@ -35,7 +33,6 @@ class SpaceShip(Sprite):
 
     def update(self):
         self.move_controlled()
-        self.enemy.update_enemy()
 
     def move_controlled (self):
         self.keys = pygame.key.get_pressed()
@@ -74,7 +71,7 @@ class SpaceShip(Sprite):
                 self.broken_weapon(screen)
                 self.current_spaceship = 0
 
-    def shoot (self, screen):
+    def shoot (self, screen, enemy):
         self.keys_bullet = pygame.key.get_pressed()
             
         if self.keys_bullet[pygame.K_SPACE]:
@@ -87,7 +84,7 @@ class SpaceShip(Sprite):
                 self.bullets.append(self.bullet_counter)
                 for self.items in self.bullets:
                     self.bullet.bullet_rect.y -= self.movement
-                    if self.bullet.bullet_rect.colliderect(self.enemy.image_rect_enemy):
+                    if self.bullet.bullet_rect.colliderect(enemy.image_rect_enemy):
                         self.bullets.clear()
                         self.bullet.update()
                         self.counter = self.counter + 1
@@ -98,12 +95,12 @@ class SpaceShip(Sprite):
                         self.bullet.bullet_rect.y = self.image_rect.y + 5
                         break
                     if self.bullet.bullet_rect.y <= 0:
+                        if self.current_spaceship == 1:
+                            self.failed_attack = True
                         self.bullets.clear()
                         self.bullet.update()
                         self.bullet_counter = 0
                         self.bullet.bullet_rect.y = self.image_rect.y + 5
-                        if self.current_spaceship == 1:
-                            self.failed_attack = True
                         break
             break
 
@@ -111,20 +108,20 @@ class SpaceShip(Sprite):
         if self.current_spaceship == 0:
             font = pygame.font.Font(FONT_STYLE, 28)
             text = font.render("You have hit the enemy!", True, (255, 255, 255))
-            screen.blit(text, (SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.40))
+            screen.blit(text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.40))
             pygame.display.update()
             pygame.time.delay(2000)
         elif self.current_spaceship == 1:
             font = pygame.font.Font(FONT_STYLE, 28)
             text = font.render("You dealt an attack with double damage!", True, (255, 255, 255))
-            screen.blit(text, (SCREEN_WIDTH * 0.25, SCREEN_HEIGHT * 0.45))
+            screen.blit(text, (SCREEN_WIDTH * 0.10, SCREEN_HEIGHT * 0.45))
             pygame.display.update()
             pygame.time.delay(2000)
             self.weapon_counter += 1
 
     def status (self, screen):
         font = pygame.font.Font(FONT_STYLE, 22)
-        text = f" Times you hit the enemy: {len(self.hits)} "
+        text = f" New high score: {len(self.hits)} "
         message = font.render(text, True, (0, 0, 0))
         message.get_rect()
         screen.blit(message, (0, SCREEN_HEIGHT * 0.96))
@@ -134,16 +131,15 @@ class SpaceShip(Sprite):
             self.weapon_power(screen)
             self.random_counter -= 1
 
-
     def weapon_power (self, screen):
         self.weapon_counter = 0
         font = pygame.font.Font(FONT_STYLE, 28)
-        text = f" You take DOUBLE DAMAGE for one hit! "
+        text = f" You have DOUBLE DAMAGE for one hit! "
         message_weapon = font.render(text, True, (255, 255, 255))
         message_weapon.get_rect()
-        icon = pygame.transform.scale(BULLET_DOUBLE, (50, 80))
-        screen.blit(icon, (525, SCREEN_HEIGHT * 0.25))
-        screen.blit(message_weapon, (SCREEN_WIDTH * 0.25, SCREEN_HEIGHT * 0.45))
+        icon = pygame.transform.scale(BULLET_DOUBLE, (60, 90))
+        screen.blit(icon, (525, SCREEN_HEIGHT * 0.20))
+        screen.blit(message_weapon, (SCREEN_WIDTH * 0.10, SCREEN_HEIGHT * 0.50))
         pygame.display.update()
         pygame.time.delay(1500)
     
@@ -152,7 +148,7 @@ class SpaceShip(Sprite):
         text = f" You've used your power-up! "
         message_weapon = font.render(text, True, (255, 255, 255))
         message_weapon.get_rect()
-        screen.blit(message_weapon, (SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.30))
+        screen.blit(message_weapon, (SCREEN_WIDTH * 0.20, SCREEN_HEIGHT * 0.35))
         pygame.display.update()
         pygame.time.delay(1000)
         self.counter = 0

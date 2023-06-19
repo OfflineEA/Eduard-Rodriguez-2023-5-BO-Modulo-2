@@ -21,6 +21,7 @@ class Game:
         self.enemy = Enemy(520, 90)
         self.spaceship = SpaceShip()
         self.rect = pygame.Rect(0, 570, 1100, 80)
+        self.rounds = 1
         pygame.mixer.music.load("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/SongLoop.mp3")
         self.game_over_sound = pygame.mixer.Sound("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/Dead.wav")
     
@@ -43,12 +44,13 @@ class Game:
                 self.playing = False
 
             if self.enemy.counter_enemy == 5:
-                pygame.mixer.music.stop()
+                pygame.mixer.music.pause()
                 self.game_over_sound.play()
                 if event.type == pygame.KEYDOWN:
+                    self.rounds = self.rounds + 1
                     self.spaceship.restart()
                     self.enemy.restart_enemy(520, 90)
-                    pygame.mixer.music.play(-1)
+                    pygame.mixer.music.unpause()
 
     def update(self):
         self.spaceship.update()
@@ -60,7 +62,7 @@ class Game:
         self.draw_background()
         pygame.draw.rect(self.screen, (255, 255, 255), self.rect, 50)
 
-        self.spaceship.shoot(self.screen)
+        self.spaceship.shoot(self.screen, self.enemy)
         self.spaceship.draw(self.screen)
         self.enemy.shoot_enemy(self.screen,self.spaceship)
         self.enemy.draw_enemy(self.screen)
@@ -85,11 +87,19 @@ class Game:
     def game_over_screen(self):
         pygame.display.flip()
         font = pygame.font.Font(FONT_STYLE, 24)
+        self.game_over = pygame.transform.scale(GAMEOVER, (520, 55))
         restart_text = font.render("Press any key to restart", True, (255, 255, 255))
         restart_text.get_rect()
 
+        highscore_text = font.render(f"Your record is: {len(self.spaceship.hits)}", True, (255, 255, 255))
+        highscore_text.get_rect()
+
+        round_text = font.render(f"You are in the round: {self.rounds}", True, (255, 255, 255))
+        round_text.get_rect()
+
         self.screen.fill((0, 0, 0))
-        self.game_over = pygame.transform.scale(GAMEOVER, (520, 55))
         self.screen.blit(self.game_over, (290, SCREEN_HEIGHT * 0.40))
-        self.screen.blit(restart_text, (SCREEN_WIDTH * 0.38, SCREEN_HEIGHT * 0.60))
+        self.screen.blit(restart_text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.60))
+        self.screen.blit(highscore_text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.65))
+        self.screen.blit(round_text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.70))
         pygame.display.flip()

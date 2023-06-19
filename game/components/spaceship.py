@@ -16,7 +16,7 @@ class SpaceShip(Sprite):
         self.image_rect = self.image.get_rect()
         self.image_rect.x = (SCREEN_WIDTH - self.image_size[0])// 2 
         self.image_rect.y = SCREEN_HEIGHT * 0.8
-        self.movement = 15 
+        self.movement = 10 
         self.bullets = []
         self.hits = []
         self.bullet = Bullet(self.image_rect.center, BULLET)

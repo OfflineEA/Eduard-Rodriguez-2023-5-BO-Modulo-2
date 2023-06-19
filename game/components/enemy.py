@@ -15,7 +15,7 @@ class Enemy (Sprite):
         self.image_rect_enemy = self.ship_enemy.get_rect()
         self.image_rect_enemy.x = position_x      # Recomendado: 520
         self.image_rect_enemy.y = position_y      # Recomendado: 90
-        self.movement_enemy = 15
+        self.movement_enemy = 10
         self.direction_enemy = 1
         self.enemy_timer = 0
         self.bullet_enemy = Bullet(self.image_rect_enemy.center, BULLET_ENEMY)
@@ -65,7 +65,7 @@ class Enemy (Sprite):
         self.sound_damage.play()
         font = pygame.font.Font(FONT_STYLE, 28)
         text = font.render(" The enemy has hit you! ", True, (255, 255, 255))
-        screen.blit(text, (SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.40))
+        screen.blit(text, (SCREEN_WIDTH * 0.25, SCREEN_HEIGHT * 0.40))
         pygame.display.update()
         pygame.time.delay(2000)
 

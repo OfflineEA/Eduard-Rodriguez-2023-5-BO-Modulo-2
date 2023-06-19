@@ -1,15 +1,11 @@
-
 import pygame
 from pygame.sprite import Sprite
 
-from game.utils.constants import BULLET, SCREEN_HEIGHT
-
-
 class Bullet(Sprite):
-    def __init__(self, spaceship_center):
+    def __init__(self, spaceship_center, bullet):
         super().__init__()
         self.bullet_size = (20, 30)
-        self.bullet = pygame.transform.scale(BULLET, self.bullet_size)
+        self.bullet = pygame.transform.scale(bullet, self.bullet_size)
         self.bullet_rect = self.bullet.get_rect()
         self.movement = 10
         self.bullet_rect.center = spaceship_center

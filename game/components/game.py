@@ -1,12 +1,11 @@
 import pygame
 
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, FONT_STYLE
 
 from game.components.spaceship import SpaceShip
 
 from game.components.enemy import Enemy
 
-# Game tiene un "Spaceship" - Por lo general esto es iniciliazar un objeto Spaceship en el __init__
 class Game:
     def __init__(self):
         pygame.init()
@@ -14,23 +13,18 @@ class Game:
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.playing = False  # variable de control para salir del ciclo
+        self.playing = False  
         self.game_speed = 10
         self.x_pos_bg = 0
         self.y_pos_bg = 0
-        self.group_sprites = pygame.sprite.Group()
-        # Game tiene un "Spaceship"
+        self.enemy = Enemy(520, 90)
         self.spaceship = SpaceShip()
-        self.enemy = Enemy()
+        self.rect = pygame.Rect(0, 570, 1100, 80)
         
-        self.group_sprites.add(self.spaceship, self.enemy)
-
     def run(self):
-        # Game loop: events - update - draw
         self.playing = True
 
-        # while self.playing == True
-        while self.playing: # Mientras el atributo playing (self.playing) sea true "repito"
+        while self.playing: 
             self.handle_events()
             self.update()
             self.draw()
@@ -40,42 +34,34 @@ class Game:
         pygame.quit()
 
     def handle_events(self):
-        # Para un "event" (es un elemento) en la lista (secuencia) que me retorna el metodo get()
         for event in pygame.event.get():
-            # si el "event" type es igual a pygame.QUIT entonces cambiamos playing a False
             if event.type == pygame.QUIT:
                 self.playing = False
-            
-            
-            
-            #self.spaceship.shoot(self.screen)
+
+            if self.enemy.counter_enemy >= 5:
+                    if event.type == pygame.KEYDOWN:
+                        self.spaceship.restart()
+                        self.enemy.restart_enemy(520, 90)
 
     def update(self):
-        # Llamamos el metodo de la clase spaceship para ejecutar el movimiento
         self.spaceship.update()
-        self.enemy.update_enemy()
-
-        # if self.spaceship.indicator_hit:
-        #     print("entra al update")
-        #     self.spaceship.damage_caused()
-        
-        
-        
-
+        self.enemy.update_enemy()  
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
+        pygame.draw.rect(self.screen, (255, 255, 255), self.rect, 50)
 
-        # dibujamos las naves en pantalla
         self.spaceship.shoot(self.screen)
         self.spaceship.draw(self.screen)
-        self.enemy.shoot_enemy(self.screen)
+        self.enemy.shoot_enemy(self.screen,self.spaceship)
         self.enemy.draw_enemy(self.screen)
-        
-        
 
+        if self.enemy.counter_enemy >= 5:
+            self.game_over_screen()
+            pygame.time.delay(1000)
+        
         pygame.display.update()
         pygame.display.flip()
 
@@ -88,5 +74,15 @@ class Game:
             self.screen.blit(image, (self.x_pos_bg, self.y_pos_bg - image_height))
             self.y_pos_bg = 0
         self.y_pos_bg += self.game_speed
+    
+    def game_over_screen(self):
+        pygame.display.flip()
+        font = pygame.font.Font(FONT_STYLE, 24)
+        restart_text = font.render("Press any key to restart", True, (255, 255, 255))
+        restart_text.get_rect()
 
-
+        self.screen.fill((0, 0, 0))
+        self.game_over = pygame.transform.scale(GAMEOVER, (520, 55))
+        self.screen.blit(self.game_over, (290, SCREEN_HEIGHT * 0.40))
+        self.screen.blit(restart_text, (SCREEN_WIDTH * 0.38, SCREEN_HEIGHT * 0.60))
+        pygame.display.flip()

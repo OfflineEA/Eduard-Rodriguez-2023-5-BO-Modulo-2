@@ -24,7 +24,9 @@ SHIELD_TYPE = 'shield'
 
 SPACESHIP = pygame.image.load(os.path.join(IMG_DIR, "Spaceship/spaceship.png"))
 SPACESHIP_SHIELD = pygame.image.load(os.path.join(IMG_DIR, "Spaceship/spaceship_shield.png"))
+SPACESHIP_DAMAGE = pygame.image.load(os.path.join(IMG_DIR, "Spaceship/spaceship_damage.png"))
 BULLET = pygame.image.load(os.path.join(IMG_DIR, "Bullet/bullet_3.png"))
+BULLET_DOUBLE = pygame.image.load(os.path.join(IMG_DIR, "Bullet/bullet_double.png"))
 EFECT_BULLET = pygame.image.load(os.path.join(IMG_DIR, "Bullet/bullet_1.png"))
 
 BULLET_ENEMY = pygame.image.load(os.path.join(IMG_DIR, "Bullet/bullet_2.png"))

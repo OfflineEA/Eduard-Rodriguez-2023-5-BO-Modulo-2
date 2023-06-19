@@ -9,6 +9,7 @@ from game.components.enemy import Enemy
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -20,10 +21,12 @@ class Game:
         self.enemy = Enemy(520, 90)
         self.spaceship = SpaceShip()
         self.rect = pygame.Rect(0, 570, 1100, 80)
-        
+        pygame.mixer.music.load("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/SongLoop.mp3")
+        self.game_over_sound = pygame.mixer.Sound("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/Dead.wav")
+    
     def run(self):
+        pygame.mixer.music.play(-1)
         self.playing = True
-
         while self.playing: 
             self.handle_events()
             self.update()
@@ -36,12 +39,16 @@ class Game:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
                 self.playing = False
 
-            if self.enemy.counter_enemy >= 5:
-                    if event.type == pygame.KEYDOWN:
-                        self.spaceship.restart()
-                        self.enemy.restart_enemy(520, 90)
+            if self.enemy.counter_enemy == 5:
+                pygame.mixer.music.stop()
+                self.game_over_sound.play()
+                if event.type == pygame.KEYDOWN:
+                    self.spaceship.restart()
+                    self.enemy.restart_enemy(520, 90)
+                    pygame.mixer.music.play(-1)
 
     def update(self):
         self.spaceship.update()

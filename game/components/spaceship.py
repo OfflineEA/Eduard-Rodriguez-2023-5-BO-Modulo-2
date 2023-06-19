@@ -10,6 +10,7 @@ class SpaceShip(Sprite):
     
     def __init__(self):
         super().__init__()
+        pygame.mixer.init()
         self.image_size = (60, 90)
         self.image = pygame.transform.scale(SPACESHIP, self.image_size)
         self.image_weapon = pygame.transform.scale(SPACESHIP_DAMAGE, self.image_size)
@@ -21,11 +22,16 @@ class SpaceShip(Sprite):
         self.hits = []
         self.bullet = Bullet(self.image_rect.center, BULLET)
         self.enemy = Enemy(520, 90)
+        self.counter = 0
         self.bullet_counter = 0
         self.random_counter = random.randrange(3, 5)
         self.current_spaceship = 0
         self.weapon_duration = 1  # Duración del escudo
         self.weapon_counter = 0
+        self.failed_attack = False
+
+        self.shoot_sound = pygame.mixer.Sound("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/Shoot.wav")
+        self.power_shoot_sound = pygame.mixer.Sound("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/Shoot_Double.wav")
 
     def update(self):
         self.move_controlled()
@@ -59,15 +65,20 @@ class SpaceShip(Sprite):
             screen.blit(self.image, self.image_rect)
         elif self.current_spaceship == 1:
             screen.blit(self.image_weapon, self.image_rect)
-            if self.weapon_counter >= self.weapon_duration:
+            if self.weapon_counter > self.weapon_duration:
                 self.hits.append(self.current_spaceship)
                 self.broken_weapon(screen)
                 self.current_spaceship = 0
-
+                self.failed_attack = False
+            elif self.failed_attack:
+                self.broken_weapon(screen)
+                self.current_spaceship = 0
 
     def shoot (self, screen):
         self.keys_bullet = pygame.key.get_pressed()
+            
         if self.keys_bullet[pygame.K_SPACE]:
+            self.sound_shoot()
             self.bullet_counter = 1
             
         while True:
@@ -79,9 +90,11 @@ class SpaceShip(Sprite):
                     if self.bullet.bullet_rect.colliderect(self.enemy.image_rect_enemy):
                         self.bullets.clear()
                         self.bullet.update()
+                        self.counter = self.counter + 1
                         self.bullet_counter = 0
                         self.hits.append(self.bullet_counter)
                         self.hits_spaceship(screen)
+                        self.weapon_counter += 1
                         self.bullet.bullet_rect.y = self.image_rect.y + 5
                         break
                     if self.bullet.bullet_rect.y <= 0:
@@ -89,6 +102,8 @@ class SpaceShip(Sprite):
                         self.bullet.update()
                         self.bullet_counter = 0
                         self.bullet.bullet_rect.y = self.image_rect.y + 5
+                        if self.current_spaceship == 1:
+                            self.failed_attack = True
                         break
             break
 
@@ -109,7 +124,6 @@ class SpaceShip(Sprite):
 
     def status (self, screen):
         font = pygame.font.Font(FONT_STYLE, 22)
-        self.counter = len(self.hits)
         text = f" Times you hit the enemy: {len(self.hits)} "
         message = font.render(text, True, (0, 0, 0))
         message.get_rect()
@@ -119,7 +133,6 @@ class SpaceShip(Sprite):
             self.current_spaceship = 1
             self.weapon_power(screen)
             self.random_counter -= 1
-            self.counter =- len(self.hits)
 
 
     def weapon_power (self, screen):
@@ -142,11 +155,17 @@ class SpaceShip(Sprite):
         screen.blit(message_weapon, (SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.30))
         pygame.display.update()
         pygame.time.delay(1000)
+        self.counter = 0
+
+    def sound_shoot(self):
+        if self.current_spaceship == 0:
+            self.shoot_sound.play()
+        elif self.current_spaceship == 1:
+            self.power_shoot_sound.play()
 
     def restart (self):
         self.hits.clear()
         self.counter = 0
-        pygame.display.update()
         
 
 

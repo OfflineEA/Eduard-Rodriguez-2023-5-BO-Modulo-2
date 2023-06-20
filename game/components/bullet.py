@@ -11,10 +11,11 @@ class Bullet(Sprite):
         self.bullet_rect.center = spaceship_center
 
     def update(self):
+        # Actualiza la posición de la bala
         self.bullet_rect.y -= self.movement
         if self.bullet_rect.y <= 0:
-            self.kill()
+            self.kill()  # Elimina la bala cuando sale de la pantalla
 
-    def draw (self, screen):
+    def draw(self, screen):
+        # Dibuja la bala en la pantalla
         screen.blit(self.bullet, self.bullet_rect)
-        

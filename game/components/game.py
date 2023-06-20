@@ -24,6 +24,8 @@ class Game:
         self.rounds = 1
         pygame.mixer.music.load("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/SongLoop.mp3")
         self.game_over_sound = pygame.mixer.Sound("Eduard-Rodriguez-2023-5-BO-Modulo-2/game/assets/Songs/Dead.wav")
+        pygame.mixer.music.set_volume(0.2)
+        self.game_over_sound.set_volume(0.1)
     
     def run(self):
         pygame.mixer.music.play(-1)
@@ -38,6 +40,7 @@ class Game:
         pygame.quit()
 
     def handle_events(self):
+        # Maneja los eventos del juego, como salir del juego o reiniciar después de perder
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
@@ -49,14 +52,16 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     self.rounds = self.rounds + 1
                     self.spaceship.restart()
-                    self.enemy.restart_enemy(520, 90)
+                    self.enemy.restart(520, 90)
                     pygame.mixer.music.unpause()
 
     def update(self):
+        # Actualiza la lógica del juego
         self.spaceship.update()
         self.enemy.update_enemy()  
 
     def draw(self):
+        # Dibuja los elementos del juego en la pantalla
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
@@ -68,13 +73,14 @@ class Game:
         self.enemy.draw_enemy(self.screen)
 
         if self.enemy.counter_enemy >= 5:
-            self.game_over_screen()
+            self.draw_game_over()
             pygame.time.delay(1000)
         
         pygame.display.update()
         pygame.display.flip()
 
     def draw_background(self):
+        # Dibuja el fondo en movimiento del juego
         image = pygame.transform.scale(BG, (SCREEN_WIDTH, SCREEN_HEIGHT))
         image_height = image.get_height()
         self.screen.blit(image, (self.x_pos_bg, self.y_pos_bg))
@@ -84,8 +90,8 @@ class Game:
             self.y_pos_bg = 0
         self.y_pos_bg += self.game_speed
     
-    def game_over_screen(self):
-        pygame.display.flip()
+    def draw_game_over(self):
+        # Dibuja la pantalla de Game Over
         font = pygame.font.Font(FONT_STYLE, 24)
         self.game_over = pygame.transform.scale(GAMEOVER, (520, 55))
         restart_text = font.render("Press any key to restart", True, (255, 255, 255))
